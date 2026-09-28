@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>UPI: Managing a Nationwide Digital Transformation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#0d1117;--ink2:#161b22;--ink3:#1c2431;--ink4:#21262d;
+  --border:rgba(139,148,158,0.15);--border2:rgba(139,148,158,0.3);
+  --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+  --blue:#4493f8;--bdim:rgba(68,147,248,0.12);
+  --teal:#39d353;--tdim:rgba(57,211,83,0.12);
+  --amber:#e3b341;--adim:rgba(227,179,65,0.12);
+  --red:#f85149;--rdim:rgba(248,81,73,0.12);
+  --purple:#bc8cff;--pdim:rgba(188,140,255,0.12);
+  --cyan:#79c0ff;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:6px;--r2:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;overflow:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--ink2)}
+::-webkit-scrollbar-thumb{background:var(--ink4);border-radius:2px}
+.app{display:flex;height:100vh}
+.sidebar{width:210px;min-width:210px;background:var(--ink2);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:48px;min-height:48px;background:var(--ink2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+.content{flex:1;overflow-y:auto;padding:20px}
+/* sidebar */
+.logo{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logomark{width:30px;height:30px;background:linear-gradient(135deg,#4493f8,#39d353);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.logo-t{font-size:11px;font-weight:600;line-height:1.3;color:var(--text)}
+.logo-s{font-size:10px;color:var(--text2)}
+.nav{padding:8px;flex:1;overflow-y:auto}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);cursor:pointer;color:var(--text2);font-size:12px;border:1px solid transparent;transition:.15s;margin-bottom:2px;user-select:none}
+.ni:hover{background:var(--ink3);color:var(--text)}
+.ni.active{background:rgba(68,147,248,0.15);border-color:rgba(68,147,248,0.25);color:var(--blue);font-weight:500}
+.ni span:first-child{font-size:13px;flex-shrink:0;pointer-events:none}
+.ni span:last-child{font-size:11px;pointer-events:none}
+.ni *{pointer-events:none}
+.stat-pill{padding:10px 14px;border-top:1px solid var(--border)}
+.stat-num{font-size:22px;font-weight:700;font-family:var(--mono);text-align:center;color:var(--teal)}
+.stat-lbl{font-size:10px;color:var(--text2);text-align:center;text-transform:uppercase;letter-spacing:.06em}
+/* topbar */
+.tb-title{font-size:13px;font-weight:600}
+.tb-tag{font-size:10px;padding:3px 8px;border-radius:20px;font-family:var(--mono)}
+.t-blue{background:var(--bdim);color:var(--blue);border:1px solid rgba(68,147,248,.25)}
+.t-green{background:var(--tdim);color:var(--teal);border:1px solid rgba(57,211,83,.25)}
+.t-amber{background:var(--adim);color:var(--amber);border:1px solid rgba(227,179,65,.25)}
+.t-red{background:var(--rdim);color:var(--red);border:1px solid rgba(248,81,73,.25)}
+.t-purple{background:var(--pdim);color:var(--purple);border:1px solid rgba(188,140,255,.25)}
+/* layout helpers */
+.card{background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px}
+.sh-title{font-size:17px;font-weight:600;margin-bottom:3px}
+.sh-sub{font-size:12px;color:var(--text2);max-width:520px;line-height:1.5}
+.page{display:none}.page.show{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fi .22s ease}
+/* kpi */
+.kpi{padding:14px;background:var(--ink2);border:1px solid var(--border);border-radius:var(--r2)}
+.kpi-l{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.kpi-v{font-size:20px;font-weight:700;font-family:var(--mono);line-height:1}
+.kpi-d{font-size:11px;color:var(--text2);margin-top:4px}
+/* table */
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:8px 10px;border-bottom:1px solid rgba(139,148,158,.06);font-size:12px}
+tr:hover td{background:rgba(68,147,248,.03)}
+tr:last-child td{border-bottom:0}
+/* progress */
+.pb{height:4px;background:var(--ink4);border-radius:2px;overflow:hidden}
+.pf{height:100%;border-radius:2px;transition:width .5s}
+.pb-lg{height:8px}
+/* stat row */
+.sr{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.sr:last-child{border-bottom:0}
+.sr-l{font-size:12px;color:var(--text2)}
+.sr-v{font-size:12px;font-family:var(--mono);font-weight:500}
+/* timeline */
+.tl-item{display:grid;grid-template-columns:80px 1fr;gap:0;margin-bottom:0}
+.tl-year{font-size:12px;font-weight:700;font-family:var(--mono);color:var(--blue);padding:14px 12px 14px 0;text-align:right;border-right:2px solid var(--border2);position:relative}
+.tl-year::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--blue);position:absolute;right:-5px;top:18px}
+.tl-body{padding:10px 0 10px 16px}
+.tl-head{font-size:12px;font-weight:600;margin-bottom:3px}
+.tl-text{font-size:11px;color:var(--text2);line-height:1.5}
+.tl-num{font-size:11px;color:var(--teal);font-family:var(--mono);margin-top:3px}
+/* decision card */
+.dc{border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:10px}
+.dc-head{padding:12px 14px;background:var(--ink3);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.dc-body{padding:14px;display:none}
+.dc-body.open{display:block}
+.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.dc-box{padding:10px;border-radius:var(--r);background:var(--ink4)}
+.dc-box-l{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.dc-box-v{font-size:12px;line-height:1.5}
+/* scenario tab */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:7px 14px;font-size:12px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+.tab-panel{display:none}.tab-panel.active{display:block}
+/* tension matrix */
+.tension-cell{padding:8px;border-radius:4px;font-size:11px;line-height:1.4;cursor:default}
+/* ai box */
+.ai-box{background:var(--ink3);border:1px solid rgba(68,147,248,.2);border-radius:8px;padding:14px;margin-top:10px}
+.ai-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ai-av{width:24px;height:24px;border-radius:50%;background:rgba(68,147,248,.15);border:1px solid rgba(68,147,248,.3);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ai-nm{font-size:11px;font-weight:600;color:var(--blue)}
+.ai-tx{font-size:12px;color:var(--text2);line-height:1.7;white-space:pre-wrap}
+/* inputs */
+input,select,textarea{background:var(--ink3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:12px;padding:7px 10px;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+input[type=range]{-webkit-appearance:none;height:3px;background:var(--ink4);border-radius:2px;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--blue);border-radius:50%;cursor:pointer}
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);border:1px solid var(--border2);cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font);transition:.15s;background:var(--ink3);color:var(--text)}
+.btn:hover{background:var(--ink4)}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-blue:hover{background:#5aa3ff}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+/* div */
+.divider{height:1px;background:var(--border);margin:12px 0}
+/* tooltip */
+.tooltip{position:fixed;background:var(--ink2);border:1px solid var(--border2);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--text);pointer-events:none;z-index:1000;max-width:240px;line-height:1.5;display:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.pulse{animation:pulse 1.6s infinite}
+/* gantt */
+.g-row{display:flex;align-items:center;height:26px;margin-bottom:3px}
+.g-lbl{width:160px;font-size:10px;color:var(--text2);text-align:right;padding-right:10px;flex-shrink:0}
+.g-track{flex:1;height:10px;background:var(--ink3);border-radius:2px;overflow:hidden;position:relative}
+.g-bar{height:100%;border-radius:2px;position:absolute}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logomark">₹</div>
+    <div><div class="logo-t">UPI Transformation</div><div class="logo-s">NIT Warangal · MBA Ops</div></div>
+  </div>
+  <nav class="nav" id="nav">
+    <div class="ni active" data-page="overview"><span>🏠</span><span>Executive Overview</span></div>
+    <div class="ni" data-page="stakeholder"><span>👥</span><span>Stakeholder Tensions</span></div>
+    <div class="ni" data-page="technology"><span>⚙️</span><span>Technology Decisions</span></div>
+    <div class="ni" data-page="risk"><span>🛡</span><span>Risk Framework</span></div>
+    <div class="ni" data-page="scalability"><span>📈</span><span>Scalability Analysis</span></div>
+    <div class="ni" data-page="scenario"><span>🔮</span><span>Scenario Planning</span></div>
+    <div class="ni" data-page="decisions"><span>⚖️</span><span>Decision Log</span></div>
+    <div class="ni" data-page="lessons"><span>🎯</span><span>PM Lessons</span></div>
+    <div class="ni" data-page="ai"><span>🤖</span><span>AI Analyst</span></div>
+  </nav>
+  <div class="stat-pill">
+    <div class="stat-num">14B</div>
+    <div class="stat-lbl">Monthly TXNs · Jan 2024</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <span class="tb-title">UPI: Managing a Nationwide Digital Transformation</span>
+    <span class="tb-tag t-blue">Case Study</span>
+    <span class="tb-tag t-green">2016–2024</span>
+    <span class="tb-tag t-amber">MBA Operations</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--text2)">NIT Warangal · Nikhil Kumar Singh</span>
+  </div>
+
+  <div class="content" id="content">
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<div class="page show fade-in" id="page-overview">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Executive Overview</div>
+      <div class="sh-sub">UPI is not a payments app — it is a nationwide infrastructure transformation that required simultaneously managing 12 competing stakeholders, 3 regulatory frameworks, a 10,000× scalability requirement, and a zero-revenue business model.</div>
+    </div>
+    <span class="tb-tag t-green">Phase 4: Mature Scale</span>
+  </div>
+
+  <!-- Impact KPIs -->
+  <div class="g4" style="margin-bottom:16px">
+    <div class="kpi"><div class="kpi-l">Monthly Transactions</div><div class="kpi-v" style="color:var(--teal)">14.0B</div><div class="kpi-d">Jan 2024 · ↑ from 0 in 2016</div></div>
+    <div class="kpi"><div class="kpi-l">Transaction Value (Monthly)</div><div class="kpi-v">₹18.4L Cr</div><div class="kpi-d">~$220 Billion / month</div></div>
+    <div class="kpi"><div class="kpi-l">Registered Users</div><div class="kpi-v">300M+</div><div class="kpi-d">Across 50+ banks & apps</div></div>
+    <div class="kpi"><div class="kpi-l">Countries with UPI</div><div class="kpi-v" style="color:var(--blue)">7</div><div class="kpi-d">Singapore, UAE, France +4</div></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:16px">
+    <!-- Timeline -->
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:14px">Transformation Timeline</div>
+      <div class="tl-item"><div class="tl-year">2009</div><div class="tl-body"><div class="tl-head">NPCI Founded</div><div class="tl-text">National Payments Corp of India formed as umbrella body. Mandate: make India's payment system world-class.</div></div></div>
+      <div class="tl-item"><div class="tl-year">2012</div><div class="tl-body"><div class="tl-head">IMPS Launched</div><div class="tl-text">Immediate Payment Service — 24×7 real-time transfers. First proof-of-concept for instant rails.</div><div class="tl-num">Peak: 5M txns/month</div></div></div>
+      <div class="tl-item"><div class="tl-year">2016</div><div class="tl-body"><div class="tl-head">UPI Goes Live</div><div class="tl-text">April 2016: soft launch with 21 banks. August 2016: public launch by PM Modi. Single VPA replaces IFSC+account.</div><div class="tl-num">Month 1: 93,000 transactions</div></div></div>
+      <div class="tl-item"><div class="tl-year">2017</div><div class="tl-body"><div class="tl-head">Demonetisation Catalyst</div><div class="tl-text">Nov 2016 demonetisation forces digital adoption. UPI transactions surge 10× in 3 months. Google Pay, PhonePe enter.</div><div class="tl-num">Dec 2017: 145M txns/month</div></div></div>
+      <div class="tl-item"><div class="tl-year">2020</div><div class="tl-body"><div class="tl-head">Zero MDR Policy</div><div class="tl-text">Govt mandates zero MDR for UPI. Banks lose ₹2,000Cr/year revenue. Adoption accelerates 3×.</div><div class="tl-num">2020: 2.2B txns/month</div></div></div>
+      <div class="tl-item"><div class="tl-year">2023</div><div class="tl-body"><div class="tl-head">UPI One World + Global</div><div class="tl-text">NFC-based UPI for foreigners. UPI live in Singapore, UAE, France. G20 push for cross-border interop.</div><div class="tl-num">2024: 14B txns/month</div></div></div>
+    </div>
+
+    <!-- What made it work -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:12px">Why UPI Succeeded: The 5 Design Bets</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="padding:9px 12px;background:var(--ink3);border-radius:var(--r);border-left:3px solid var(--teal)">
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">1. Open API Architecture</div>
+            <div style="font-size:11px;color:var(--text2)">Any bank / fintech could build on UPI rails. Created competition at app layer, not infrastructure layer.</div>
+          </div>
+          <div style="padding:9px 12px;background:var(--ink3);border-radius:var(--r);border-left:3px solid var(--blue)">
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">2. VPA Identity (not account numbers)</div>
+            <div style="font-size:11px;color:var(--text2)">yourname@bank removed the need to share sensitive account details. Reduced friction to near zero.</div>
+          </div>
+          <div style="padding:9px 12px;background:var(--ink3);border-radius:var(--r);border-left:3px solid var(--amber)">
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">3. Interoperability as Mandate</div>
+            <div style="font-size:11px;color:var(--text2)">RBI mandated all banks to join UPI. No opt-out. Created network effects from day 1.</div>
+          </div>
+          <div style="padding:9px 12px;background:var(--ink3);border-radius:var(--r);border-left:3px solid var(--purple)">
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">4. Zero Cost to End User</div>
+            <div style="font-size:11px;color:var(--text2)">No transaction fee. Govt bore the cost. Removed the single biggest adoption barrier in a price-sensitive market.</div>
+          </div>
+          <div style="padding:9px 12px;background:var(--ink3);border-radius:var(--r);border-left:3px solid var(--red)">
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">5. 24×7 Real-Time Settlement</div>
+            <div style="font-size:11px;color:var(--text2)">Settled in seconds, any time. Even developed economies (US, EU) couldn't match this in 2016.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:12px">The Central Management Challenge</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">UPI's transformation required managing <span style="color:var(--text);font-weight:500">four simultaneous tensions</span> that no single stakeholder could resolve alone:<br><br>
+        <span style="color:var(--teal)">→ Speed vs. Security</span> — RBI wanted robust KYC; fintechs wanted frictionless onboarding<br>
+        <span style="color:var(--blue)">→ Openness vs. Control</span> — NPCI needed interoperability; banks wanted proprietary advantage<br>
+        <span style="color:var(--amber)">→ Revenue vs. Adoption</span> — Banks lost MDR income; government wanted mass adoption<br>
+        <span style="color:var(--red)">→ Scale vs. Reliability</span> — 10,000× growth needed; 99.9% uptime non-negotiable</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Growth Chart -->
+  <div class="card">
+    <div style="font-size:13px;font-weight:600;margin-bottom:14px">UPI Transaction Volume Growth (2016–2024)</div>
+    <svg id="growth-svg" viewBox="0 0 660 200" width="100%" height="200"></svg>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:var(--text2)">
+      <span style="display:inline-block;width:10px;height:3px;background:var(--teal);margin-right:4px;vertical-align:middle"></span>Monthly txns (Billions)
+      <span style="margin-left:8px;color:var(--amber)">▲ = Key policy events</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ STAKEHOLDER ══════════ -->
+<div class="page fade-in" id="page-stakeholder">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Stakeholder Tension Analysis</div>
+      <div class="sh-sub">UPI required aligning 12 stakeholder groups with fundamentally conflicting interests. The PM's job was not just coordination — it was structured conflict resolution.</div>
+    </div>
+  </div>
+
+  <!-- Tension Matrix -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:4px">Conflict Intensity Matrix — Who conflicts with whom?</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:14px">Cell colour = conflict intensity. Click a cell to see the specific tension.</div>
+    <div id="tension-matrix"></div>
+    <div style="display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--text2);flex-wrap:wrap">
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(248,81,73,.35);border-radius:2px;margin-right:4px"></span>High conflict</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(227,179,65,.3);border-radius:2px;margin-right:4px"></span>Medium conflict</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:rgba(57,211,83,.15);border-radius:2px;margin-right:4px"></span>Aligned</span>
+    </div>
+    <div id="tension-detail" style="display:none;margin-top:12px;padding:12px;background:var(--ink3);border-radius:var(--r);border-left:3px solid var(--blue)">
+      <div id="tension-detail-text" style="font-size:12px;color:var(--text2);line-height:1.6"></div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">Stakeholder Power-Interest Map</div>
+      <svg id="sh-svg" viewBox="0 0 320 260" width="100%" height="260"></svg>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">Stakeholder Positions on Key Issues</div>
+      <table>
+        <thead><tr><th>Stakeholder</th><th>Zero MDR</th><th>Open API</th><th>Data Localisation</th></tr></thead>
+        <tbody id="sh-positions"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:13px;font-weight:600;margin-bottom:12px">Resolution Mechanisms Used by NPCI</div>
+    <div class="g3">
+      <div style="padding:12px;background:var(--ink3);border-radius:var(--r)">
+        <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px">Regulatory Mandate</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">RBI made UPI participation mandatory for all banks with net worth &gt;₹500Cr. Removed "wait and watch" option. Used for: interoperability, zero MDR.</div>
+      </div>
+      <div style="padding:12px;background:var(--ink3);border-radius:var(--r)">
+        <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px">Revenue Redistribution</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">Govt compensated banks via PLI (Production Linked Incentive) scheme ₹1,300Cr/year for infrastructure costs. Made zero MDR politically viable for banks.</div>
+      </div>
+      <div style="padding:12px;background:var(--ink3);border-radius:var(--r)">
+        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:6px">Layered Architecture</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">NPCI owns the switch layer (infrastructure). Banks own the account layer. Fintechs own the app layer. Each stakeholder got sovereign control of their layer — ended turf wars.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TECHNOLOGY ══════════ -->
+<div class="page fade-in" id="page-technology">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Technology Decision Analysis</div>
+      <div class="sh-sub">Every architectural decision in UPI was a trade-off. This section analyses 6 critical technology choices using a decision matrix.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:14px">Architecture: How UPI Works (3-Layer Model)</div>
+    <svg id="arch-svg" viewBox="0 0 660 200" width="100%" height="200"></svg>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:12px">Technology Decision Matrix — 6 Critical Choices</div>
+    <table>
+      <thead><tr><th>Decision</th><th>Option Chosen</th><th>Option Rejected</th><th>Trade-off Made</th><th>Outcome</th></tr></thead>
+      <tbody id="tech-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">Build vs. Buy Analysis</div>
+      <div style="display:flex;flex-direction:column;gap:8px" id="bvb"></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">Tech Stack Maturity Progression</div>
+      <div id="tech-prog"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ RISK ══════════ -->
+<div class="page fade-in" id="page-risk">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Risk Framework</div>
+      <div class="sh-sub">Quantified risk register — not just H/M/L colours. Each risk carries an estimated ₹ cost if it materialises, based on real UPI transaction data.</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <span class="tb-tag t-red">3 Critical</span>
+      <span class="tb-tag t-amber">4 High</span>
+      <span class="tb-tag t-green">4 Managed</span>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <div style="font-size:12px;font-weight:600;margin-bottom:12px;color:var(--text2)">Risk Heatmap (Probability × Impact)</div>
+      <svg id="risk-svg" viewBox="0 0 300 260" width="100%" height="260"></svg>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:600;margin-bottom:12px;color:var(--text2)">Top Risks by ₹ Exposure</div>
+      <div id="risk-bars"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:13px;font-weight:600;margin-bottom:12px">Quantified Risk Register</div>
+    <table>
+      <thead><tr><th>Risk</th><th>Category</th><th>Prob</th><th>Impact (1-5)</th><th>Score</th><th>₹ Cost if Realised</th><th>Mitigation</th><th>Status</th></tr></thead>
+      <tbody id="risk-tbody"></tbody>
+    </table>
+    <div style="font-size:10px;color:var(--text2);margin-top:10px">₹ Cost estimates based on: UPI peak TPS 2,200 (2023), avg txn value ₹1,900, downtime/breach scenarios. For educational analysis only.</div>
+  </div>
+</div>
+
+<!-- ══════════ SCALABILITY ══════════ -->
+<div class="page fade-in" id="page-scalability">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Scalability Analysis</div>
+      <div class="sh-sub">UPI scaled 10,000× in 8 years. This section analyses what infrastructure decisions made that possible — and where the next bottleneck will be.</div>
+    </div>
+  </div>
+
+  <div class="g4" style="margin-bottom:14px">
+    <div class="kpi"><div class="kpi-l">Peak TPS (2016)</div><div class="kpi-v">0.01</div><div class="kpi-d">93,000 txns / month</div></div>
+    <div class="kpi"><div class="kpi-l">Peak TPS (2024)</div><div class="kpi-v" style="color:var(--teal)">5,400</div><div class="kpi-d">Transactions per second</div></div>
+    <div class="kpi"><div class="kpi-l">Growth Factor</div><div class="kpi-v" style="color:var(--amber)">10,000×</div><div class="kpi-d">In 8 years</div></div>
+    <div class="kpi"><div class="kpi-l">System Uptime</div><div class="kpi-v" style="color:var(--teal)">99.9%</div><div class="kpi-d">Target maintained</div></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <div style="font-size:12px;font-weight:600;margin-bottom:12px">TPS Capacity vs. Demand (2016–2026F)</div>
+      <svg id="tps-svg" viewBox="0 0 320 220" width="100%" height="220"></svg>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:600;margin-bottom:12px">Infrastructure Scaling Decisions</div>
+      <div id="infra-decisions" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:14px">Bottleneck Analysis — Where Will UPI Break Next?</div>
+    <div class="g3">
+      <div style="padding:12px;background:var(--ink3);border-radius:var(--r);border:1px solid rgba(248,81,73,.25)">
+        <div style="font-size:11px;color:var(--red);font-weight:600;margin-bottom:6px">🔴 Current Bottleneck</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Bank Core Banking Systems</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">PSU banks run 30-year-old CBS on mainframes. UPI's 24×7 demand conflicts with maintenance windows. 23% of UPI failures originate at bank CBS layer — not NPCI switch.</div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px;font-family:var(--mono)">Failure rate: 2.3% (industry avg)</div>
+      </div>
+      <div style="padding:12px;background:var(--ink3);border-radius:var(--r);border:1px solid rgba(227,179,65,.25)">
+        <div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:6px">🟡 Emerging Bottleneck</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Cross-Border Settlement</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">UPI's T+0 settlement model works within India. Cross-border (Singapore, UAE) requires FX conversion + correspondent banking — introduces 2-4 sec latency. Target: &lt;0.5 sec.</div>
+        <div style="font-size:11px;color:var(--amber);margin-top:6px;font-family:var(--mono)">Cross-border latency: 2.8 sec avg</div>
+      </div>
+      <div style="padding:12px;background:var(--ink3);border-radius:var(--r);border:1px solid rgba(57,211,83,.2)">
+        <div style="font-size:11px;color:var(--teal);font-weight:600;margin-bottom:6px">🟢 Well Handled</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px">NPCI Switch Capacity</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">NPCI's central switch handles 5,400 TPS with 40% headroom. Built on IBM mainframes + cloud burst. Auto-scales. Invested ₹2,000Cr in infra upgrades since 2019.</div>
+        <div style="font-size:11px;color:var(--teal);margin-top:6px;font-family:var(--mono)">Headroom: 40% above peak</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:13px;font-weight:600;margin-bottom:12px">Scalability Roadmap — What Needs to Happen for 50B txns/month</div>
+    <table>
+      <thead><tr><th>Component</th><th>2024 Status</th><th>2026 Requirement</th><th>Gap</th><th>Action Needed</th></tr></thead>
+      <tbody id="scale-table"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ SCENARIO ══════════ -->
+<div class="page fade-in" id="page-scenario">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Scenario Planning — 3 Futures for UPI</div>
+      <div class="sh-sub">Consulting-grade scenario analysis: not a single forecast but 3 plausible futures with distinct trigger conditions and management responses.</div>
+    </div>
+  </div>
+
+  <div class="tabs" id="scenario-tabs">
+    <div class="tab active" data-tab="optimistic">🚀 Optimistic (2026)</div>
+    <div class="tab" data-tab="base">📊 Base Case (2026)</div>
+    <div class="tab" data-tab="stressed">⚠️ Stressed (2026)</div>
+    <div class="tab" data-tab="simulator">🎛 Scenario Simulator</div>
+  </div>
+
+  <div class="tab-panel active" id="tab-optimistic">
+    <div class="g3" style="margin-bottom:14px">
+      <div class="kpi"><div class="kpi-l">Monthly Transactions</div><div class="kpi-v" style="color:var(--teal)">35B</div><div class="kpi-d">↑ 150% from 2024</div></div>
+      <div class="kpi"><div class="kpi-l">Countries Active</div><div class="kpi-v" style="color:var(--teal)">20+</div><div class="kpi-d">G20 interop achieved</div></div>
+      <div class="kpi"><div class="kpi-l">CBDC Integration</div><div class="kpi-v" style="color:var(--teal)">Live</div><div class="kpi-d">e-Rupee on UPI rails</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Trigger Conditions (all must hold)</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--teal)">✓</span> RBI approves CBDC-UPI integration by Q2 2025</div>
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--teal)">✓</span> PSU banks complete CBS modernisation — eliminates 2.3% failure rate</div>
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--teal)">✓</span> G20 agreement on UPI cross-border interoperability standard</div>
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--teal)">✓</span> Govt maintains PLI subsidy for banks (₹1,300Cr/year)</div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:rgba(57,211,83,.08);border:1px solid rgba(57,211,83,.2);border-radius:var(--r);font-size:12px;color:var(--text2)"><span style="color:var(--teal);font-weight:600">PM Action: </span>Establish a UPI Global Council with G20 central banks. Fast-track CBDC pilot expansion. Commission CBS modernisation audit for all PSU banks with RBI backing.</div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-base">
+    <div class="g3" style="margin-bottom:14px">
+      <div class="kpi"><div class="kpi-l">Monthly Transactions</div><div class="kpi-v" style="color:var(--blue)">22B</div><div class="kpi-d">↑ 57% from 2024</div></div>
+      <div class="kpi"><div class="kpi-l">Countries Active</div><div class="kpi-v" style="color:var(--blue)">10</div><div class="kpi-d">SEA + Middle East</div></div>
+      <div class="kpi"><div class="kpi-l">Market Share</div><div class="kpi-v" style="color:var(--blue)">68%</div><div class="kpi-d">Of digital payments in India</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Trigger Conditions (most likely path)</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--blue)">→</span> CBS modernisation partial — PSBs complete 60% by 2026</div>
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--blue)">→</span> UPI expands to 3-4 new countries annually</div>
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--blue)">→</span> Credit on UPI (RuPay CC + UPI) grows 5× from 2024 base</div>
+        <div style="padding:8px 12px;background:var(--ink3);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--blue)">→</span> MDR debate resurfaces — partial fee introduced for B2B transactions</div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:rgba(68,147,248,.08);border:1px solid rgba(68,147,248,.2);border-radius:var(--r);font-size:12px;color:var(--text2)"><span style="color:var(--blue);font-weight:600">PM Action: </span>Prioritise Credit-on-UPI as the next revenue unlock. Push for selective MDR (B2B only, &gt;₹2,000 txns). Manage bank resistance through phased implementation.</div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-stressed">
+    <div class="g3" style="margin-bottom:14px">
+      <div class="kpi"><div class="kpi-l">Monthly Transactions</div><div class="kpi-v" style="color:var(--amber)">16B</div><div class="kpi-d">↑ 14% — near stagnation</div></div>
+      <div class="kpi"><div class="kpi-l">Market Share</div><div class="kpi-v" style="color:var(--red)">52%</div><div class="kpi-d">↓ from 70% — fragmentation</div></div>
+      <div class="kpi"><div class="kpi-l">Downtime Events</div><div class="kpi-v" style="color:var(--red)">4</div><div class="kpi-d">&gt;1 hour each in 2025-26</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Stress Triggers (any one could cause this)</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="padding:8px 12px;background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--red)">⚠</span> Major UPI security breach — public confidence collapse (as seen with WhatsApp Pay delays)</div>
+        <div style="padding:8px 12px;background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--red)">⚠</span> Banks lobby RBI to restrict fintech access — app fragmentation follows</div>
+        <div style="padding:8px 12px;background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--red)">⚠</span> CBS failures in 2+ major PSU banks cause settlement delays → mass merchant exodus</div>
+        <div style="padding:8px 12px;background:var(--rdim);border:1px solid rgba(248,81,73,.2);border-radius:var(--r);font-size:12px;display:flex;gap:8px;align-items:center"><span style="color:var(--red)">⚠</span> Geopolitical block on cross-border UPI (as China did with WeChat Pay restrictions)</div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:var(--r);font-size:12px;color:var(--text2)"><span style="color:var(--red);font-weight:600">PM Action: </span>Build a UPI Crisis Response Protocol. Create a dedicated security war-room (CERT-In + NPCI + RBI). Establish a 4-hour RTO for any systemic failure. Mandate quarterly CBS stress tests.</div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-simulator">
+    <div style="display:grid;grid-template-columns:260px 1fr;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card" style="padding:14px">
+          <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:12px">ADJUST PARAMETERS</div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--text2)">CBS Modernisation %</span><span style="font-size:11px;font-family:var(--mono)" id="sl-cbs-v">60%</span></div>
+            <input type="range" id="sl-cbs" min="0" max="100" value="60" oninput="simUpdate()"/>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--text2)">Countries with UPI</span><span style="font-size:11px;font-family:var(--mono)" id="sl-ctry-v">7</span></div>
+            <input type="range" id="sl-ctry" min="2" max="25" value="7" oninput="simUpdate()"/>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--text2)">MDR Policy (bps)</span><span style="font-size:11px;font-family:var(--mono)" id="sl-mdr-v">0</span></div>
+            <input type="range" id="sl-mdr" min="0" max="30" value="0" oninput="simUpdate()"/>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--text2)">Security Incident Risk %</span><span style="font-size:11px;font-family:var(--mono)" id="sl-sec-v">5%</span></div>
+            <input type="range" id="sl-sec" min="0" max="30" value="5" oninput="simUpdate()"/>
+          </div>
+          <button class="btn btn-blue" style="width:100%;margin-top:6px" onclick="simUpdate()">▶ Run Scenario</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="g3">
+          <div class="kpi"><div class="kpi-l">Projected Monthly TXNs</div><div class="kpi-v" id="sim-txn" style="color:var(--teal)">22B</div></div>
+          <div class="kpi"><div class="kpi-l">System Reliability</div><div class="kpi-v" id="sim-rel">99.2%</div></div>
+          <div class="kpi"><div class="kpi-l">Transformation Health</div><div class="kpi-v" id="sim-health">74</div></div>
+        </div>
+        <div class="card" id="sim-insight">
+          <div style="font-size:12px;font-weight:600;margin-bottom:8px">Scenario Insight</div>
+          <div id="sim-text" style="font-size:12px;color:var(--text2);line-height:1.6">Adjust parameters to see how different decisions affect UPI's trajectory.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DECISIONS ══════════ -->
+<div class="page fade-in" id="page-decisions">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Management Decision Log</div>
+      <div class="sh-sub">5 real UPI decisions analysed as PM case briefs: what the choice was, who opposed it, the trade-off made, and what happened. This is what consulting-grade analysis looks like.</div>
+    </div>
+  </div>
+  <div id="decision-log"></div>
+</div>
+
+<!-- ══════════ LESSONS ══════════ -->
+<div class="page fade-in" id="page-lessons">
+  <div class="sh">
+    <div>
+      <div class="sh-title">PM Lessons — What UPI Teaches Every Project Manager</div>
+      <div class="sh-sub">Synthesis of 8 years of UPI transformation into actionable frameworks for managing large-scale digital projects.</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">The 5 PM Frameworks UPI Validated</div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="frameworks"></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:12px">What UPI Would Do Differently (Hindsight Analysis)</div>
+      <div style="display:flex;flex-direction:column;gap:8px" id="hindsight"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:14px">UPI vs. Global Peers — Comparative Analysis</div>
+    <table>
+      <thead><tr><th>System</th><th>Country</th><th>Launch</th><th>Peak TPS</th><th>Settlement</th><th>Revenue Model</th><th>Key Differentiator</th></tr></thead>
+      <tbody id="peer-table"></tbody>
+    </table>
+  </div>
+
+  <div class="card" style="background:rgba(68,147,248,.06);border-color:rgba(68,147,248,.3)">
+    <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--blue)">The Central Thesis — What This Project Proves</div>
+    <div style="font-size:13px;line-height:1.8;color:var(--text2)">
+      "UPI scaled to 14 billion transactions per month not despite the tensions between its stakeholders, but because those tensions were <span style="color:var(--text);font-weight:500">actively and deliberately managed</span>. NPCI resolved the bank vs. fintech conflict through layered architecture. It resolved the revenue vs. adoption conflict through government compensation. It resolved the speed vs. security conflict through federated KYC. Every stakeholder got what mattered most to them — which is why every stakeholder stayed in the system.<br><br>
+      The lesson for any large-scale digital transformation: <span style="color:var(--teal);font-weight:500">your job as PM is not to eliminate conflict — it is to design systems where conflict becomes a source of innovation rather than a source of paralysis.</span>"
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ AI ══════════ -->
+<div class="page fade-in" id="page-ai">
+  <div class="sh">
+    <div>
+      <div class="sh-title">AI Case Study Analyst</div>
+      <div class="sh-sub">Ask anything about the UPI transformation — powered by Claude AI with full case context loaded.</div>
+    </div>
+    <span class="tb-tag t-purple">AI Powered</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 260px;gap:16px">
+    <div class="card" style="display:flex;flex-direction:column;min-height:400px">
+      <div style="font-size:11px;color:var(--text2);font-weight:600;margin-bottom:12px">UPI CASE STUDY ANALYST</div>
+      <div id="chat-msgs" style="flex:1;overflow-y:auto;max-height:360px;display:flex;flex-direction:column;gap:10px;padding-right:4px">
+        <div class="ai-box">
+          <div class="ai-hd"><div class="ai-av">🤖</div><span class="ai-nm">Case Study Analyst</span></div>
+          <div class="ai-tx">I have full context on the UPI transformation case study. Ask me about:
+→ Stakeholder conflicts and how they were resolved
+→ Technology architecture decisions and trade-offs
+→ Risk quantification and mitigation strategies
+→ Scalability challenges (TPS growth from 0.01 to 5,400)
+→ Scenario analysis and future projections
+→ Comparison with global payment systems (Venmo, PIX, PayNow)
+→ What a PM should have done differently
+
+What do you want to explore?</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
+        <div style="display:flex;gap:8px">
+          <input id="ai-input" placeholder="Ask about UPI transformation..." onkeydown="if(event.key==='Enter')sendAI()"/>
+          <button class="btn btn-blue" id="ai-btn" onclick="sendAI()">Ask</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card" style="padding:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px">SUGGESTED QUESTIONS</div>
+        <div style="display:flex;flex-direction:column;gap:5px" id="ai-prompts"></div>
+      </div>
+      <div class="card" style="padding:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px">CASE FACTS LOADED</div>
+        <div class="sr"><span class="sr-l">Timeline</span><span class="sr-v">2009–2024</span></div>
+        <div class="sr"><span class="sr-l">Peak TXNs</span><span class="sr-v" style="color:var(--teal)">14B/month</span></div>
+        <div class="sr"><span class="sr-l">Decisions</span><span class="sr-v">5 analysed</span></div>
+        <div class="sr"><span class="sr-l">Stakeholders</span><span class="sr-v">12 mapped</span></div>
+        <div class="sr"><span class="sr-l">Risks</span><span class="sr-v">11 quantified</span></div>
+        <div class="sr"><span class="sr-l">Scenarios</span><span class="sr-v">3 modelled</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+<div class="tooltip" id="tip"></div>
+
+<script>
+// ══════ NAV ══════
+document.getElementById('nav').addEventListener('click',function(e){
+  const item=e.target.closest('.ni');
+  if(!item)return;
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+  item.classList.add('active');
+  const pg=document.getElementById('page-'+item.dataset.page);
+  if(pg){pg.classList.add('show');pg.classList.remove('fade-in');void pg.offsetWidth;pg.classList.add('fade-in');}
+});
+
+// ══════ TOOLTIP ══════
+const tip=document.getElementById('tip');
+function showTip(e,t){tip.style.display='block';tip.innerHTML=t;tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY-6)+'px'}
+function hideTip(){tip.style.display='none'}
+
+// ══════ TABS ══════
+document.getElementById('scenario-tabs').addEventListener('click',function(e){
+  const tab=e.target.closest('.tab');
+  if(!tab)return;
+  document.querySelectorAll('#scenario-tabs .tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+});
+
+// ══════ DATA ══════
+const UPI_CONTEXT=`You are a UPI Digital Transformation Case Study Analyst for an MBA Operations project at NIT Warangal.
+
+KEY FACTS YOU KNOW:
+- UPI launched April 2016 by NPCI (National Payments Corp of India) with RBI backing
+- Started with 93,000 txns/month (2016) → 14 billion/month (January 2024)
+- Peak TPS: 0.01 (2016) → 5,400 (2024) — a 10,000× increase in 8 years
+- Zero MDR policy implemented January 2020 — banks lost ₹2,000Cr/year revenue but adoption tripled
+- Architecture: 3-layer model (NPCI switch + Bank CBS + Fintech App layer)
+- 12 key stakeholders: RBI, NPCI, Govt of India, 50+ banks (PSU & private), fintechs (Google Pay, PhonePe, Paytm), SEBI, merchants, end users
+- Key conflicts: Banks vs fintechs (revenue), RBI vs fintechs (data localisation), Speed vs Security
+- 5 critical PM decisions: UPI launch model, Zero MDR, Interoperability mandate, WhatsApp Pay delay, UPI global expansion
+- System uptime: 99.9% target maintained despite 10,000× scale
+- Global peers: Brazil PIX (launched 2020, 140M users), Singapore PayNow, US Zelle, UK Faster Payments
+- NPCI invested ₹2,000Cr in infrastructure upgrades since 2019
+- CBS (Core Banking System) modernisation at PSU banks is the current biggest bottleneck (23% of failures)
+- UPI now live in 7 countries: India, Singapore, UAE, France, Nepal, Bhutan, Sri Lanka
+- Credit on UPI: RuPay credit card + UPI link launched 2022 — new revenue pathway
+- The student (Nikhil) has logistics/ops background, targeting management consulting placements (Black Brix)
+
+ANSWER STYLE: Be precise, use real numbers, structure answers with clear logic, reference specific UPI events, think like a McKinsey/BCG consultant analysing a case. Max 200 words per answer.`;
+
+// ══════ GROWTH CHART ══════
+function buildGrowthChart(){
+  const svg=document.getElementById('growth-svg');if(!svg)return;
+  const data=[
+    {yr:'2016',v:0.001,event:'Launch'},{yr:'2017',v:0.145,event:'Demonetisation'},{yr:'2018',v:0.524,event:''},
+    {yr:'2019',v:1.07,event:''},{yr:'2020',v:2.23,event:'Zero MDR'},{yr:'2021',v:4.56,event:''},
+    {yr:'2022',v:7.82,event:'Credit on UPI'},{yr:'2023',v:11.4,event:''},{yr:'2024',v:14.0,event:'14B milestone'},
+  ];
+  const W=620,H=160,ml=30,mt=10,mb=30;
+  const maxV=15;
+  const x=i=>ml+i*(W/(data.length-1));
+  const y=v=>mt+H-(v/maxV)*H;
+  const pts=data.map((d,i)=>`${x(i)},${y(d.v)}`).join(' ');
+  const area=`${x(0)},${mt+H} ${pts} ${x(data.length-1)},${mt+H}`;
+  let h=`<defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(57,211,83,0.3)"/><stop offset="100%" stop-color="rgba(57,211,83,0)"/></linearGradient></defs>`;
+  // grid
+  [0,5,10,15].forEach(v=>{const yv=y(v);h+=`<line x1="${ml}" y1="${yv}" x2="${ml+W}" y2="${yv}" stroke="rgba(139,148,158,0.08)" stroke-width="1"/><text x="${ml-4}" y="${yv+4}" text-anchor="end" fill="#8b949e" font-size="9" font-family="DM Mono">${v}B</text>`});
+  h+=`<polygon points="${area}" fill="url(#gg)"/>`;
+  h+=`<polyline points="${pts}" fill="none" stroke="#39d353" stroke-width="2"/>`;
+  data.forEach((d,i)=>{
+    h+=`<circle cx="${x(i)}" cy="${y(d.v)}" r="3" fill="#39d353"/>`;
+    h+=`<text x="${x(i)}" y="${mt+H+16}" text-anchor="middle" fill="#8b949e" font-size="9" font-family="DM Sans">${d.yr}</text>`;
+    if(d.event){h+=`<line x1="${x(i)}" y1="${y(d.v)-4}" x2="${x(i)}" y2="${y(d.v)-18}" stroke="#e3b341" stroke-width="1" stroke-dasharray="2,2"/><text x="${x(i)}" y="${y(d.v)-21}" text-anchor="middle" fill="#e3b341" font-size="8" font-family="DM Sans">${d.event}</text>`;}
+  });
+  svg.innerHTML=h;
+}
+
+// ══════ ARCHITECTURE DIAGRAM ══════
+function buildArch(){
+  const svg=document.getElementById('arch-svg');if(!svg)return;
+  let h='';
+  const layers=[
+    {label:'App Layer',sub:'Google Pay · PhonePe · Paytm · BHIM · Bank Apps',col:'#4493f8',y:20},
+    {label:'UPI Switch (NPCI)',sub:'Central hub · Routes all transactions · ISO 8583 protocol',col:'#39d353',y:80},
+    {label:'Bank CBS Layer',sub:'50+ banks · Core Banking Systems · Account debit/credit',col:'#bc8cff',y:140},
+  ];
+  layers.forEach(l=>{
+    h+=`<rect x="20" y="${l.y}" width="620" height="48" rx="6" fill="${l.col}18" stroke="${l.col}" stroke-width="0.8"/>`;
+    h+=`<text x="40" y="${l.y+20}" fill="${l.col}" font-size="12" font-weight="600" font-family="DM Sans">${l.label}</text>`;
+    h+=`<text x="40" y="${l.y+36}" fill="#8b949e" font-size="10" font-family="DM Sans">${l.sub}</text>`;
+  });
+  // arrows
+  h+=`<line x1="340" y1="68" x2="340" y2="78" stroke="#8b949e" stroke-width="1" marker-end="url(#arr)"/>`;
+  h+=`<line x1="340" y1="128" x2="340" y2="138" stroke="#8b949e" stroke-width="1" marker-end="url(#arr)"/>`;
+  h+=`<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8b949e" stroke-width="1.5"/></marker></defs>`;
+  // labels
+  h+=`<text x="346" y="75" fill="#8b949e" font-size="9" font-family="DM Sans">UPI API (JSON/REST)</text>`;
+  h+=`<text x="346" y="135" fill="#8b949e" font-size="9" font-family="DM Sans">ISO 8583 messages</text>`;
+  svg.innerHTML=h;
+}
+
+// ══════ STAKEHOLDER MATRIX ══════
+function buildTensionMatrix(){
+  const el=document.getElementById('tension-matrix');if(!el)return;
+  const actors=['RBI','Banks','Fintechs','NPCI','Merchants','Govt'];
+  const tensions=[
+    [0,2,1,1,0,1],
+    [2,0,3,2,1,3],
+    [1,3,0,1,0,1],
+    [1,2,1,0,1,1],
+    [0,1,0,1,0,0],
+    [1,3,1,1,0,0],
+  ];
+  const details=[
+    [null,'RBI regulates banks — PPI norms, KYC mandates create compliance burden','RBI vs fintechs: data localisation, payment aggregator norms','RBI is NPCI\'s regulator — sets operational guidelines','','RBI acts on Govt mandate but maintains independence'],
+    ['Banks resist losing MDR income (₹2,000Cr/year loss from Zero MDR)',null,'Banks vs fintechs: Banks fear disintermediation. PhonePe/GPay own customer relationship, banks just hold accounts.','Banks want NPCI to slow fintech access; NPCI resists','Banks slow merchant onboarding — own POS ecosystem','Banks lobbied hard against Zero MDR. Govt overruled.'],
+    ['Fintechs chafe under RBI data localisation rules (WhatsApp Pay 18-month delay)','Fintechs bypass banks for customer acquisition — banks fear irrelevance',null,'Fintechs want faster API updates, NPCI cautious about stability','','Fintechs aligned on adoption but resist MDR'],
+    ['NPCI reports to RBI — limited autonomy on pricing','NPCI needs banks to participate — can\'t alienate them','NPCI wants fintech innovation but not at reliability risk',null,'','Govt uses NPCI as policy vehicle (Jan Dhan integration)'],
+    ['','Merchants want lower MDR — banks want higher','Merchants prefer fintechs for ease of onboarding','','',],
+    ['','Govt forced Zero MDR against bank wishes (Jan 2020)','Aligned on adoption','Govt uses NPCI for financial inclusion goals','',''],
+  ];
+  const cols=['rgba(57,211,83,0.12)','rgba(227,179,65,0.25)','rgba(248,81,73,0.3)'];
+  let h=`<div style="display:grid;grid-template-columns:80px repeat(${actors.length},1fr);gap:3px">`;
+  h+=`<div></div>`;
+  actors.forEach(a=>h+=`<div style="font-size:10px;color:var(--text2);text-align:center;padding:4px 2px;font-weight:500">${a}</div>`);
+  tensions.forEach((row,r)=>{
+    h+=`<div style="font-size:10px;color:var(--text2);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-weight:500">${actors[r]}</div>`;
+    row.forEach((v,c)=>{
+      const bg=r===c?'var(--ink3)':cols[v];
+      const txt=r===c?'—':v===0?'Aligned':v===1?'Low':v===2?'Medium':'High';
+      const txtCol=v===3?'var(--red)':v===2?'var(--amber)':v===1?'var(--text2)':'var(--teal)';
+      const det=details[r][c]||details[c][r]||'';
+      h+=`<div class="tension-cell" style="background:${bg};color:${txtCol};text-align:center" ${det?`onmouseenter="showTip(event,'${det.replace(/'/g,'&#39;')}')" onmouseleave="hideTip()" onclick="showTensionDetail('${det.replace(/'/g,'&#39;')}')"`:''} >${r===c?'—':txt}</div>`;
+    });
+  });
+  h+=`</div>`;
+  el.innerHTML=h;
+}
+
+function showTensionDetail(txt){
+  const d=document.getElementById('tension-detail');
+  const t=document.getElementById('tension-detail-text');
+  d.style.display='block';
+  t.textContent=txt;
+}
+
+function buildSHMap(){
+  const svg=document.getElementById('sh-svg');if(!svg)return;
+  const actors=[
+    {name:'RBI',interest:70,influence:95,col:'#f85149'},
+    {name:'NPCI',interest:95,influence:85,col:'#39d353'},
+    {name:'Govt',interest:90,influence:92,col:'#39d353'},
+    {name:'PSU Banks',interest:50,influence:80,col:'#e3b341'},
+    {name:'Fintechs',interest:95,influence:55,col:'#4493f8'},
+    {name:'Private Banks',interest:70,influence:65,col:'#e3b341'},
+    {name:'Merchants',interest:80,influence:35,col:'#8b949e'},
+    {name:'End Users',interest:60,influence:20,col:'#8b949e'},
+    {name:'SEBI',interest:40,influence:60,col:'#8b949e'},
+  ];
+  const W=300,H=240,ml=40,mt=20;
+  let h=`<defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#484f58" stroke-width="1.5"/></marker></defs>`;
+  // axes
+  h+=`<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+H}" stroke="rgba(139,148,158,0.2)" stroke-width="1"/>`;
+  h+=`<line x1="${ml}" y1="${mt+H}" x2="${ml+W}" y2="${mt+H}" stroke="rgba(139,148,158,0.2)" stroke-width="1"/>`;
+  h+=`<text x="${ml+W/2}" y="${mt+H+18}" text-anchor="middle" fill="#8b949e" font-size="9" font-family="DM Sans">← Low Interest — High Interest →</text>`;
+  h+=`<text x="${ml-28}" y="${mt+H/2}" text-anchor="middle" fill="#8b949e" font-size="9" font-family="DM Sans" transform="rotate(-90,${ml-28},${mt+H/2})">Influence</text>`;
+  // quadrant labels
+  h+=`<text x="${ml+5}" y="${mt+14}" fill="rgba(248,81,73,0.4)" font-size="8" font-family="DM Sans">Manage</text>`;
+  h+=`<text x="${ml+W/2+5}" y="${mt+14}" fill="rgba(57,211,83,0.4)" font-size="8" font-family="DM Sans">Key Players</text>`;
+  h+=`<text x="${ml+5}" y="${mt+H-6}" fill="rgba(139,148,158,0.4)" font-size="8" font-family="DM Sans">Monitor</text>`;
+  h+=`<text x="${ml+W/2+5}" y="${mt+H-6}" fill="rgba(57,211,83,0.3)" font-size="8" font-family="DM Sans">Keep Satisfied</text>`;
+  h+=`<line x1="${ml+W/2}" y1="${mt}" x2="${ml+W/2}" y2="${mt+H}" stroke="rgba(139,148,158,0.1)" stroke-width="1" stroke-dasharray="3,3"/>`;
+  h+=`<line x1="${ml}" y1="${mt+H/2}" x2="${ml+W}" y2="${mt+H/2}" stroke="rgba(139,148,158,0.1)" stroke-width="1" stroke-dasharray="3,3"/>`;
+  actors.forEach(a=>{
+    const px=ml+(a.interest/100)*W;
+    const py=mt+(1-a.influence/100)*H;
+    h+=`<circle cx="${px}" cy="${py}" r="6" fill="${a.col}" fill-opacity="0.25" stroke="${a.col}" stroke-width="1.2" onmouseenter="showTip(event,'${a.name}<br/>Interest: ${a.interest} | Influence: ${a.influence}')" onmouseleave="hideTip()"/>`;
+    h+=`<text x="${px}" y="${py+14}" text-anchor="middle" fill="${a.col}" font-size="8" font-family="DM Sans">${a.name}</text>`;
+  });
+  svg.innerHTML=h;
+}
+
+function buildSHPositions(){
+  const tb=document.getElementById('sh-positions');if(!tb)return;
+  const rows=[
+    ['RBI','Opposed','Neutral','Strongly for'],
+    ['PSU Banks','Strongly opposed','Opposed','Opposed'],
+    ['Fintechs','Strongly for','Strongly for','Opposed'],
+    ['NPCI','For','Strongly for','For'],
+    ['Merchants','Strongly for','For','Neutral'],
+    ['Govt','Strongly for','For','For'],
+  ];
+  const col=(v)=>v.includes('Strongly for')?'color:var(--teal)':v.includes('for')?'color:var(--blue)':v.includes('Strongly opposed')?'color:var(--red)':v.includes('Opposed')?'color:var(--amber)':'color:var(--text2)';
+  tb.innerHTML=rows.map(r=>`<tr><td style="font-weight:500">${r[0]}</td>${r.slice(1).map(v=>`<td style="font-size:11px;${col(v)}">${v}</td>`).join('')}</tr>`).join('');
+}
+
+// ══════ TECH ══════
+function buildTech(){
+  const tb=document.getElementById('tech-tbody');if(!tb)return;
+  const rows=[
+    ['JSON/REST API (not SOAP)','REST API','SOAP/XML','Dev speed vs rigidity. REST 5× faster to integrate.','250+ third-party apps in 2 years — would have taken 6+ on SOAP'],
+    ['VPA identity model','Virtual Payment Address','IFSC + Account Number','Abstraction vs simplicity. VPA hides sensitive data.','Adoption 10× vs IMPS which required account details'],
+    ['Centralised NPCI switch','Single central switch','Bilateral bank connections','Control vs resilience. Central point of failure risk.','Enabled real-time routing. Alternative = 50×50 bilateral = 2,500 connections'],
+    ['Bank-agnostic UPI PIN','Separate UPI PIN','Bank login password','Security vs UX. UPI PIN = 2-factor without OTP wait.','Reduced fraud by 40% vs card transactions (RBI data)'],
+    ['Open API for fintechs','Open API standard','Bank-controlled closed loop','Ecosytem vs control. Banks lost interface monopoly.','Google Pay, PhonePe scaled to 300M users — impossible in closed model'],
+    ['24×7 real-time settlement','T+0 instant settlement','T+1 batch settlement','Infrastructure cost vs user experience.','Festival season demand peaks: 2× normal volume handled without delay'],
+  ];
+  tb.innerHTML=rows.map(r=>`<tr>
+    <td style="font-weight:500;font-size:12px">${r[0]}</td>
+    <td style="color:var(--teal);font-size:11px">✓ ${r[1]}</td>
+    <td style="color:var(--red);font-size:11px">✗ ${r[2]}</td>
+    <td style="color:var(--text2);font-size:11px">${r[3]}</td>
+    <td style="color:var(--blue);font-size:11px">${r[4]}</td>
+  </tr>`).join('');
+
+  const bvb=document.getElementById('bvb');if(bvb){
+    const items=[
+      {comp:'NPCI Switch',decision:'Build',rationale:'No commercial product could handle India-specific requirements (multiple bank formats, language support, Jan Dhan integration)',cost:'~₹800Cr'},
+      {comp:'UPI App (BHIM)',decision:'Build',rationale:'Reference implementation needed. Showed banks/fintechs the API works.',cost:'~₹12Cr'},
+      {comp:'Fraud ML Engine',decision:'Buy + Customise',rationale:'NPCI partnered with IBM for AI-based fraud detection. Speed-to-market critical.',cost:'~₹200Cr/year'},
+      {comp:'Cloud Infrastructure',decision:'Hybrid',rationale:'Core switch on-premise (RBI data localisation). Burst capacity on AWS/Azure.',cost:'~₹150Cr/year'},
+    ];
+    bvb.innerHTML=items.map(it=>`<div style="padding:10px;background:var(--ink3);border-radius:var(--r)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:12px;font-weight:500">${it.comp}</span>
+        <span style="font-size:11px;padding:2px 7px;border-radius:10px;background:${it.decision==='Build'?'var(--tdim)':it.decision==='Buy + Customise'?'var(--bdim)':'var(--adim)'};color:${it.decision==='Build'?'var(--teal)':it.decision==='Buy + Customise'?'var(--blue)':'var(--amber)'}">${it.decision}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:3px">${it.rationale}</div>
+      <div style="font-size:10px;font-family:var(--mono);color:var(--text3)">${it.cost}</div>
+    </div>`).join('');
+  }
+
+  const tp=document.getElementById('tech-prog');if(tp){
+    const stages=[
+      {yr:'2016',label:'MVP — IMPS-based UPI',pct:10},
+      {yr:'2017',label:'Open API for fintechs',pct:25},
+      {yr:'2019',label:'UPI 2.0 — mandates, overlays',pct:45},
+      {yr:'2021',label:'UPI Lite — offline small txns',pct:65},
+      {yr:'2022',label:'Credit on UPI + NFC',pct:80},
+      {yr:'2024',label:'UPI One World (foreigners)',pct:92},
+    ];
+    tp.innerHTML=stages.map(s=>`<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:11px;color:var(--text2)">${s.yr}: ${s.label}</span>
+        <span style="font-size:11px;font-family:var(--mono);color:var(--blue)">${s.pct}%</span>
+      </div>
+      <div class="pb"><div class="pf" style="width:${s.pct}%;background:var(--blue)"></div></div>
+    </div>`).join('');
+  }
+}
+
+// ══════ RISK ══════
+const RISKS=[
+  {id:'R01',name:'UPI system-wide outage during festival',cat:'Technology',prob:2,imp:5,cost:'₹4,750 Cr',cost_n:4750,mit:'Active-active data centres, auto-failover in 8 min',status:'mitigated'},
+  {id:'R02',name:'Mass fraud via SIM swap / social engineering',cat:'Security',prob:3,imp:5,cost:'₹1,200 Cr',cost_n:1200,mit:'Device binding, cooling period, TPAP velocity checks',status:'open'},
+  {id:'R03',name:'PSU bank CBS failure causing settlement delay',cat:'Operations',prob:3,imp:4,cost:'₹840 Cr',cost_n:840,mit:'Mandatory CBS modernisation roadmap (RBI circular 2022)',status:'open'},
+  {id:'R04',name:'Regulatory block in key export market',cat:'Regulatory',prob:2,imp:4,cost:'₹500 Cr',cost_n:500,mit:'G20 diplomatic engagement, bilateral MoUs',status:'open'},
+  {id:'R05',name:'Data breach at large fintech (PhonePe/GPay)',cat:'Security',prob:2,imp:4,cost:'₹400 Cr',cost_n:400,mit:'DPSP Act compliance, mandatory SOC-2, RBI audit',status:'open'},
+  {id:'R06',name:'Fintech duopoly regulation — market cap',cat:'Regulatory',prob:3,imp:3,cost:'₹200 Cr',cost_n:200,mit:'30% market share cap policy under discussion at NPCI',status:'watch'},
+  {id:'R07',name:'RuPay credit card low adoption on UPI',cat:'Adoption',prob:3,imp:3,cost:'₹180 Cr',cost_n:180,mit:'Merchant incentives, bank product bundling',status:'open'},
+  {id:'R08',name:'UPI Lite offline fraud at Tier-3 level',cat:'Security',prob:2,imp:3,cost:'₹90 Cr',cost_n:90,mit:'₹500 per txn cap, daily ₹2,000 limit on Lite wallet',status:'mitigated'},
+  {id:'R09',name:'API instability after major version update',cat:'Technology',prob:2,imp:3,cost:'₹75 Cr',cost_n:75,mit:'Blue-green deployments, 6-month deprecation notice',status:'mitigated'},
+  {id:'R10',name:'Merchant MDR reinstatement resistance',cat:'Financial',prob:2,imp:2,cost:'₹40 Cr',cost_n:40,mit:'Merchant council engagement, phased B2B MDR pilot',status:'watch'},
+  {id:'R11',name:'Interoperability friction with new payment apps',cat:'Technology',prob:1,imp:2,cost:'₹20 Cr',cost_n:20,mit:'Mandatory NPCI certification before go-live',status:'mitigated'},
+];
+
+function buildRisk(){
+  const tb=document.getElementById('risk-tbody');if(!tb)return;
+  const col=(s)=>s>=15?'color:var(--red)':s>=9?'color:var(--amber)':'color:var(--teal)';
+  const bcl=(s)=>s>=15?'t-red':s>=9?'t-amber':'t-green';
+  tb.innerHTML=RISKS.map(r=>{
+    const score=r.prob*r.imp;
+    return `<tr>
+      <td style="font-weight:500">${r.name}</td>
+      <td><span class="tb-tag t-blue" style="font-size:10px">${r.cat}</span></td>
+      <td style="font-family:var(--mono)">${r.prob}/5</td>
+      <td style="font-family:var(--mono)">${r.imp}/5</td>
+      <td style="font-weight:700;font-family:var(--mono);${col(score)}">${score}</td>
+      <td style="font-family:var(--mono);color:var(--amber)">${r.cost}</td>
+      <td style="font-size:11px;color:var(--text2)">${r.mit}</td>
+      <td><span class="tb-tag ${bcl(score)}">${r.status}</span></td>
+    </tr>`;
+  }).join('');
+
+  const svg=document.getElementById('risk-svg');if(svg){
+    const margin={t:20,r:10,b:35,l:40};
+    const W=260,H=200;
+    let h='';
+    [[0.12,'rgba(57,211,83,.08)'],[0.5,'rgba(227,179,65,.08)'],[1,'rgba(248,81,73,.08)']].forEach(([limit,c])=>{
+      if(limit===0.12)h+=`<rect x="${margin.l}" y="${margin.t}" width="${W}" height="${H}" fill="${c}" rx="4"/>`;
+    });
+    for(let r=0;r<5;r++)for(let c=0;c<5;c++){
+      const s=(c+1)*(r+1);
+      const bg=s>=16?'rgba(248,81,73,0.15)':s>=9?'rgba(227,179,65,0.12)':'rgba(57,211,83,0.08)';
+      h+=`<rect x="${margin.l+c*W/5}" y="${margin.t+r*H/5}" width="${W/5-1}" height="${H/5-1}" fill="${bg}" rx="2"/>`;
+    }
+    h+=`<line x1="${margin.l}" y1="${margin.t}" x2="${margin.l}" y2="${margin.t+H}" stroke="rgba(139,148,158,0.15)" stroke-width="1"/>`;
+    h+=`<line x1="${margin.l}" y1="${margin.t+H}" x2="${margin.l+W}" y2="${margin.t+H}" stroke="rgba(139,148,158,0.15)" stroke-width="1"/>`;
+    for(let i=0;i<5;i++){
+      h+=`<text x="${margin.l+i*W/5+W/10}" y="${margin.t+H+14}" text-anchor="middle" fill="#8b949e" font-size="9" font-family="DM Mono">${i+1}</text>`;
+      h+=`<text x="${margin.l-6}" y="${margin.t+(4-i)*H/5+H/10+4}" text-anchor="end" fill="#8b949e" font-size="9" font-family="DM Mono">${i+1}</text>`;
+    }
+    h+=`<text x="${margin.l+W/2}" y="${margin.t+H+28}" text-anchor="middle" fill="#8b949e" font-size="9" font-family="DM Sans">Impact →</text>`;
+    RISKS.forEach(r=>{
+      const score=r.prob*r.imp;
+      const cx=margin.l+(r.imp-0.5)*(W/5);
+      const cy=margin.t+(5-r.prob+0.5)*(H/5)-H/5;
+      const col=score>=16?'#f85149':score>=9?'#e3b341':'#39d353';
+      h+=`<circle cx="${cx}" cy="${cy}" r="8" fill="${col}" fill-opacity="0.2" stroke="${col}" stroke-width="1.2" onmouseenter="showTip(event,'${r.id}: ${r.name}<br/>Score: ${score}<br/>${r.cost} exposure')" onmouseleave="hideTip()"/>`;
+      h+=`<text x="${cx}" y="${cy+4}" text-anchor="middle" fill="${col}" font-size="7" font-weight="600" font-family="DM Mono">${r.id.replace('R','')}</text>`;
+    });
+    svg.innerHTML=h;
+  }
+
+  const rb=document.getElementById('risk-bars');if(rb){
+    const top=[...RISKS].sort((a,b)=>b.cost_n-a.cost_n).slice(0,6);
+    const maxC=top[0].cost_n;
+    rb.innerHTML=top.map(r=>{
+      const score=r.prob*r.imp;
+      const col=score>=16?'var(--red)':score>=9?'var(--amber)':'var(--teal)';
+      return `<div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</span>
+          <span style="font-size:11px;font-family:var(--mono);color:${col};flex-shrink:0;margin-left:8px">${r.cost}</span>
+        </div>
+        <div class="pb"><div class="pf" style="width:${(r.cost_n/maxC*100)}%;background:${col}"></div></div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ══════ SCALABILITY ══════
+function buildScale(){
+  const svg=document.getElementById('tps-svg');if(!svg)return;
+  const data=[
+    {yr:'2016',demand:0.01,cap:0.5},{yr:'2017',demand:0.05,cap:1},{yr:'2018',demand:0.2,cap:2},
+    {yr:'2019',demand:0.5,cap:3},{yr:'2020',demand:1.2,cap:4},{yr:'2021',demand:2.5,cap:5},
+    {yr:'2022',demand:3.8,cap:6},{yr:'2023',demand:4.9,cap:7.5},{yr:'2024',demand:5.4,cap:7.5},
+    {yr:'2025F',demand:7,cap:9},{yr:'2026F',demand:9.5,cap:11},
+  ];
+  const W=280,H=180,ml=35,mt=10,mb=28;
+  const maxV=12;
+  const x=i=>ml+i*(W/(data.length-1));
+  const y=v=>mt+H-(v/maxV)*H;
+  const dpts=data.map((d,i)=>`${x(i)},${y(d.demand)}`).join(' ');
+  const cpts=data.map((d,i)=>`${x(i)},${y(d.cap)}`).join(' ');
+  let h=`<defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(248,81,73,0.2)"/><stop offset="100%" stop-color="rgba(248,81,73,0)"/></linearGradient></defs>`;
+  [0,3,6,9,12].forEach(v=>{const yv=y(v);h+=`<line x1="${ml}" y1="${yv}" x2="${ml+W}" y2="${yv}" stroke="rgba(139,148,158,0.08)" stroke-width="1"/><text x="${ml-4}" y="${yv+4}" text-anchor="end" fill="#8b949e" font-size="8" font-family="DM Mono">${v}K</text>`});
+  data.forEach((d,i)=>h+=`<text x="${x(i)}" y="${mt+H+16}" text-anchor="middle" fill="#8b949e" font-size="7.5" font-family="DM Sans">${d.yr}</text>`);
+  const darea=`${x(0)},${mt+H} ${dpts} ${x(data.length-1)},${mt+H}`;
+  h+=`<polygon points="${darea}" fill="url(#dg)"/>`;
+  h+=`<polyline points="${dpts}" fill="none" stroke="#f85149" stroke-width="1.5"/>`;
+  h+=`<polyline points="${cpts}" fill="none" stroke="#39d353" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  h+=`<circle cx="${x(8)}" cy="${y(5.4)}" r="4" fill="#f85149"/>`;
+  h+=`<text x="${x(4)+6}" y="${y(3)}" fill="#39d353" font-size="8" font-family="DM Sans">Capacity</text>`;
+  h+=`<text x="${x(4)+6}" y="${y(1.8)}" fill="#f85149" font-size="8" font-family="DM Sans">Demand</text>`;
+  svg.innerHTML=h;
+
+  const id=document.getElementById('infra-decisions');if(id){
+    const items=[
+      {yr:'2018',action:'Migrated NPCI switch to IBM Z-series mainframe',impact:'3× throughput increase'},
+      {yr:'2020',action:'Added cloud burst capacity (AWS + Azure)',impact:'Handles 2× peak during festivals'},
+      {yr:'2021',action:'Implemented UPI Lite — offline small txn mode',impact:'Reduced CBS load by ~15%'},
+      {yr:'2022',action:'Deployed ML-based traffic routing at NPCI switch',impact:'Reduced routing latency by 40ms'},
+      {yr:'2023',action:'Active-active dual data centre setup',impact:'RTO reduced from 30 min to 8 min'},
+    ];
+    id.innerHTML=items.map(it=>`<div style="padding:9px 12px;background:var(--ink3);border-radius:var(--r)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:12px;font-weight:500">${it.action}</span>
+        <span style="font-size:10px;font-family:var(--mono);color:var(--amber)">${it.yr}</span>
+      </div>
+      <div style="font-size:11px;color:var(--teal)">${it.impact}</div>
+    </div>`).join('');
+  }
+
+  const st=document.getElementById('scale-table');if(st){
+    const rows=[
+      ['NPCI Central Switch','5,400 TPS','9,000 TPS','3,600 TPS gap','Upgrade IBM mainframe cluster + add 2 cloud regions'],
+      ['PSU Bank CBS','1,200 TPS aggregate','3,000 TPS','1,800 TPS gap','Mandatory CBS modernisation — RBI mandate by 2026'],
+      ['Private Bank CBS','3,800 TPS aggregate','6,000 TPS','2,200 TPS gap','Already on cloud-native — upgrade APIs'],
+      ['Fraud ML Engine','2,100 TPS scoring','5,000 TPS','2,900 TPS gap','Scale ML inference cluster — GPU-based scoring'],
+      ['Cross-border Gateway','400 TPS','2,000 TPS','1,600 TPS gap','FX API optimisation + direct settlement with central banks'],
+    ];
+    st.innerHTML=rows.map(r=>`<tr>
+      <td style="font-weight:500">${r[0]}</td>
+      <td style="font-family:var(--mono)">${r[1]}</td>
+      <td style="font-family:var(--mono);color:var(--amber)">${r[2]}</td>
+      <td style="font-family:var(--mono);color:var(--red)">${r[3]}</td>
+      <td style="font-size:11px;color:var(--text2)">${r[4]}</td>
+    </tr>`).join('');
+  }
+}
+
+// ══════ DECISIONS ══════
+function buildDecisions(){
+  const el=document.getElementById('decision-log');if(!el)return;
+  const decisions=[
+    {
+      num:'01',
+      title:'Launch UPI via open API — not a bank-controlled closed loop',
+      date:'April 2016',
+      context:'NPCI had to decide: build UPI as a bank-only system (as IMPS was) or open the API to any fintech. Banks lobbied for the closed model — they feared losing the customer interface.',
+      choice:'Open API architecture — any licensed entity (bank or fintech) can build a UPI app',
+      opposed:'All major PSU banks. SBI argued fintechs were "unregulated and risky."',
+      tradeoff:'Gave up bank control of the customer layer. Accepted that fintechs would own the user relationship.',
+      outcome:'Google Pay, PhonePe, Paytm scaled to 300M users within 3 years. A closed model would have capped growth at ~30-40M (IMPS peak). The open model created a ₹18L Cr/month payment ecosystem.',
+      verdict:'Correct decision. The short-term political cost of alienating banks was worth the 10× adoption multiplier.',
+      score:95
+    },
+    {
+      num:'02',
+      title:'Mandate Zero MDR — banks absorb ₹2,000 Cr/year revenue loss',
+      date:'January 2020',
+      context:'Banks charged 0.25-0.85% MDR on UPI transactions. This was a ₹2,000 Cr/year revenue stream. The Finance Ministry wanted zero MDR to drive adoption for Jan Dhan and MSME payments.',
+      choice:'Zero MDR with a ₹1,300 Cr/year PLI (Production Linked Incentive) compensation scheme for banks',
+      opposed:'All banks including HDFC, ICICI, Axis. Banking associations submitted formal objections to RBI.',
+      tradeoff:'Banks lose ₹700 Cr/year net (after PLI). Government bears ₹1,300 Cr/year subsidy. Fintechs lose monetisation pathway.',
+      outcome:'UPI transactions grew 3× in 2020 alone (partly demonetisation anniversary, partly zero-cost effect). B2C adoption accelerated dramatically in small towns. However, fintech business models remain broken — no profitable UPI app exists today.',
+      verdict:'Correct on adoption, problematic on sustainability. The long-term revenue model for the UPI ecosystem remains unresolved.',
+      score:72
+    },
+    {
+      num:'03',
+      title:'Delay WhatsApp Pay launch by 18 months — data localisation standoff',
+      date:'2018–2020',
+      context:'WhatsApp (350M India users) applied to launch UPI payments in 2018. RBI required 100% data localisation (all payment data must be stored in India). WhatsApp\'s parent Meta refused — all data was stored on US servers.',
+      choice:'Block WhatsApp Pay until full compliance. No exceptions for market size.',
+      opposed:'WhatsApp/Meta (with significant political lobbying). Some RBI board members wanted a compromise.',
+      tradeoff:'Lost potential for 350M-user instant adoption. WhatsApp Pay launched at 10M users — not 350M — due to NPCI\'s 30% market cap restriction.',
+      outcome:'Data localisation compliance was achieved. However, WhatsApp Pay remains capped at 10M users due to NPCI\'s 30% market share restriction. The delay gave PhonePe and Google Pay time to build insurmountable leads.',
+      verdict:'Correct on regulation (data sovereignty matters). Questionable on market cap — restricting WhatsApp may have been protectionist rather than pro-consumer.',
+      score:65
+    },
+    {
+      num:'04',
+      title:'Introduce Credit on UPI — link RuPay credit cards to UPI',
+      date:'September 2022',
+      context:'UPI was purely debit-linked — only bank accounts. RBI and NPCI wanted to use UPI rails for credit too. This required RuPay (NPCI\'s own card network) to be linkable to UPI apps.',
+      choice:'Allow RuPay credit card linking to UPI apps. Banks can offer EMI, BNPL, and credit products through UPI.',
+      opposed:'Visa and Mastercard (who would lose credit card transaction volume). Private banks with co-branded Visa/Mastercard cards.',
+      tradeoff:'Creates domestic credit card ecosystem. RuPay card issuance incentivised. But requires banks to issue RuPay cards alongside Visa/Mastercard — dual issuance cost.',
+      outcome:'RuPay credit card issuance grew 40% in 2023. Credit on UPI is now a ₹8,000 Cr/month transaction segment. This is UPI\'s first real revenue pathway — banks earn interchange on credit, not debit.',
+      verdict:'Correct decision. Opens a sustainable revenue model for banks. Reduces dependence on MDR subsidy.',
+      score:88
+    },
+    {
+      num:'05',
+      title:'Expand UPI to 7 countries via bilateral MoUs',
+      date:'2021–2024',
+      context:'After COVID, India pushed for UPI internationalisation as part of G20 leadership. Singapore (PayNow), UAE (local switch), France (Eiffel Tower) were key milestones.',
+      choice:'Bilateral MoU model — each country negotiation separately. Not a single multilateral framework.',
+      opposed:'Some within NPCI who wanted a single global standard (like SWIFT) rather than patchwork MoUs. FX lobby who feared disintermediation.',
+      tradeoff:'Faster to implement (bilateral vs multilateral). But creates incompatible standards — Singapore UPI is not the same architecture as UAE UPI.',
+      outcome:'UPI live in 7 countries covering 2.5M non-resident Indians. Cross-border volume growing at 60% year-on-year. But standardisation debt is accumulating — will be harder to scale to 30+ countries without a unified protocol.',
+      verdict:'Pragmatically correct for speed. Architecturally risky. A SWIFT-like UPI global protocol is now needed urgently.',
+      score:78
+    },
+  ];
+
+  el.innerHTML=decisions.map(d=>{
+    const scoreCol=d.score>=85?'var(--teal)':d.score>=70?'var(--blue)':'var(--amber)';
+    return `<div class="dc" style="margin-bottom:10px">
+      <div class="dc-head" onclick="toggleDC(this)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px;font-weight:700;font-family:var(--mono);color:var(--text3)">${d.num}</span>
+          <div>
+            <div style="font-size:13px;font-weight:600">${d.title}</div>
+            <div style="font-size:11px;color:var(--text2)">${d.date}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span style="font-size:16px;font-weight:700;font-family:var(--mono);color:${scoreCol}">${d.score}/100</span>
+          <span style="color:var(--text2);font-size:14px">▾</span>
+        </div>
+      </div>
+      <div class="dc-body">
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;padding:10px;background:var(--ink3);border-radius:var(--r)">${d.context}</div>
+        <div class="dc-grid">
+          <div class="dc-box"><div class="dc-box-l">Decision Made</div><div class="dc-box-v" style="color:var(--teal)">${d.choice}</div></div>
+          <div class="dc-box"><div class="dc-box-l">Who Opposed</div><div class="dc-box-v" style="color:var(--red)">${d.opposed}</div></div>
+          <div class="dc-box"><div class="dc-box-l">Trade-off Made</div><div class="dc-box-v">${d.tradeoff}</div></div>
+          <div class="dc-box"><div class="dc-box-l">What Happened</div><div class="dc-box-v" style="color:var(--blue)">${d.outcome}</div></div>
+        </div>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(68,147,248,.08);border:1px solid rgba(68,147,248,.2);border-radius:var(--r)">
+          <span style="font-size:11px;color:var(--blue);font-weight:600">Verdict: </span>
+          <span style="font-size:12px;color:var(--text2)">${d.verdict}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDC(el){
+  const body=el.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ══════ LESSONS ══════
+function buildLessons(){
+  const fw=document.getElementById('frameworks');if(fw){
+    const items=[
+      {name:'Layered Architecture = Stakeholder Sovereignty',text:'Give each stakeholder group control of their own layer. NPCI owned the switch, banks owned accounts, fintechs owned UX. No zero-sum conflict.'},
+      {name:'Adoption beats Revenue (in Platform Phase)',text:'Zero MDR was painful for banks but created 300M users. Revenue follows adoption in platform businesses. Sequence matters.'},
+      {name:'Mandate Interoperability Early',text:'Making all banks join UPI from day 1 created immediate network effects. Optional participation = network fragmentation. Lesson: mandate the standard, compete on the product.'},
+      {name:'Design for the Crisis Before it Happens',text:'NPCI built active-active data centres in 2023 before a major failure — not after. Most orgs do the opposite. Proactive resilience beats reactive recovery.'},
+      {name:'Export the Standard, not Just the Product',text:'UPI\'s global expansion works because NPCI is exporting the protocol, not just the app. Countries adopt UPI architecture and build local. Lesson: platform > product in B2G.'},
+    ];
+    fw.innerHTML=items.map((it,i)=>`<div style="padding:10px 12px;background:var(--ink3);border-radius:var(--r);border-left:3px solid ${['var(--teal)','var(--blue)','var(--amber)','var(--purple)','var(--red)'][i]}">
+      <div style="font-size:12px;font-weight:600;margin-bottom:3px">${it.name}</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.5">${it.text}</div>
+    </div>`).join('');
+  }
+
+  const hs=document.getElementById('hindsight');if(hs){
+    const items=[
+      {issue:'CBS Modernisation not mandated at launch',fix:'Should have made bank CBS upgrades a pre-condition for UPI participation. Would have prevented 23% of failures.'},
+      {issue:'No revenue model from day 1',fix:'Should have built a small (5 bps) transaction fee for B2B payments from launch. Zero MDR on B2C was right; zero on all was not.'},
+      {issue:'Bilateral MoUs instead of global protocol',fix:'Should have pushed for a WTO-style UPI protocol early — now facing standardisation debt across 7 incompatible implementations.'},
+      {issue:'WhatsApp market cap restriction',fix:'30% cap may protect incumbents more than consumers. Should be reviewed — competition + regulation is better than restriction.'},
+    ];
+    hs.innerHTML=items.map(it=>`<div style="padding:9px 12px;background:var(--rdim);border:1px solid rgba(248,81,73,.15);border-radius:var(--r)">
+      <div style="font-size:11px;color:var(--red);font-weight:600;margin-bottom:3px">⚠ ${it.issue}</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.5">Better: ${it.fix}</div>
+    </div>`).join('');
+  }
+
+  const pt=document.getElementById('peer-table');if(pt){
+    const rows=[
+      ['UPI','India','2016','5,400','T+0 instant','Zero (Govt subsidised)','Open API to all fintechs'],
+      ['PIX','Brazil','2020','1,800','T+0 instant','Zero (mandatory for banks)','Built by Central Bank directly'],
+      ['PayNow','Singapore','2017','180','T+0 instant','Low MDR (~0.1%)','Linked to national ID system'],
+      ['Faster Payments','UK','2008','2,600','T+0 instant','Bank-to-bank fee','First real-time system globally'],
+      ['Zelle','USA','2017','900','T+1 (some T+0)','Zero for consumers','Bank-owned consortium'],
+      ['WeChat Pay','China','2014','300,000','T+0 instant','0.1% merchant fee','Closed ecosystem (no interop)'],
+    ];
+    pt.innerHTML=rows.map((r,i)=>`<tr>
+      <td style="font-weight:${i===0?'700':'400'};color:${i===0?'var(--teal)':'var(--text)'}">${r[0]}</td>
+      <td style="color:var(--text2)">${r[1]}</td>
+      <td style="font-family:var(--mono);font-size:11px">${r[2]}</td>
+      <td style="font-family:var(--mono);color:${i===0?'var(--teal)':'var(--text)'}">${r[3]}</td>
+      <td style="font-size:11px;color:var(--text2)">${r[4]}</td>
+      <td style="font-size:11px;color:var(--text2)">${r[5]}</td>
+      <td style="font-size:11px;color:var(--text2)">${r[6]}</td>
+    </tr>`).join('');
+  }
+}
+
+// ══════ SCENARIO SIMULATOR ══════
+function simUpdate(){
+  const cbs=+document.getElementById('sl-cbs').value;
+  const ctry=+document.getElementById('sl-ctry').value;
+  const mdr=+document.getElementById('sl-mdr').value;
+  const sec=+document.getElementById('sl-sec').value;
+  document.getElementById('sl-cbs-v').textContent=cbs+'%';
+  document.getElementById('sl-ctry-v').textContent=ctry;
+  document.getElementById('sl-mdr-v').textContent=mdr;
+  document.getElementById('sl-sec-v').textContent=sec+'%';
+  const txn=Math.round(14+(cbs/100)*8+(ctry/25)*4+(mdr>0?-2+mdr*0.1:0)-(sec/30)*5);
+  const rel=Math.max(94,Math.min(99.9,99.9-(1-cbs/100)*1.5-(sec/100)*3)).toFixed(1);
+  const health=Math.round(70+(cbs/100)*15+(ctry/25)*5-(sec/100)*20+(mdr>0?-3:0));
+  document.getElementById('sim-txn').textContent=Math.max(10,txn)+'B';
+  document.getElementById('sim-txn').style.color=txn>20?'var(--teal)':txn>15?'var(--blue)':'var(--amber)';
+  document.getElementById('sim-rel').textContent=rel+'%';
+  document.getElementById('sim-health').textContent=Math.min(95,Math.max(40,health));
+  let insight='';
+  if(cbs<40)insight='Low CBS modernisation is the binding constraint. PSU bank failures will cap growth regardless of other improvements.';
+  else if(sec>20)insight='High security incident risk will erode user trust. At this level, a major breach is near-certain — could reverse 2 years of growth.';
+  else if(mdr>15)insight='High MDR reintroduction will slow merchant adoption. Small merchants will revert to cash. Net effect: transaction volume drops even if revenue per transaction rises.';
+  else if(ctry>15)insight='Strong international expansion drives premium transaction values. Cross-border UPI txns average 3× domestic value.';
+  else insight='Parameters within normal range. Base case trajectory maintained. Key watch: CBS modernisation pace.';
+  document.getElementById('sim-text').textContent=insight;
+}
+
+// ══════ AI ══════
+const AI_PROMPTS=[
+  'Why did banks oppose zero MDR so strongly?',
+  'What was the biggest technical risk in UPI architecture?',
+  'How does UPI compare to Brazil PIX?',
+  'What should NPCI do differently in the next 5 years?',
+  'How did NPCI manage the RBI vs fintech conflict?',
+  'Why did WhatsApp Pay get delayed for 18 months?',
+  'What is the CBS modernisation problem?',
+];
+
+function buildAI(){
+  const el=document.getElementById('ai-prompts');if(!el)return;
+  el.innerHTML=AI_PROMPTS.map(q=>`<button class="btn btn-sm" style="justify-content:flex-start;text-align:left;height:auto;padding:5px 8px;line-height:1.4;font-size:10px" onclick="document.getElementById('ai-input').value='${q.replace(/'/g,"\\'")}';sendAI()">${q}</button>`).join('');
+}
+
+async function sendAI(){
+  const inp=document.getElementById('ai-input');
+  const btn=document.getElementById('ai-btn');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';btn.disabled=true;btn.textContent='…';
+  const msgs=document.getElementById('chat-msgs');
+  msgs.innerHTML+=`<div style="display:flex;justify-content:flex-end"><div style="background:var(--bdim);border:1px solid rgba(68,147,248,.25);border-radius:8px 8px 2px 8px;padding:8px 12px;max-width:85%"><div style="font-size:12px;line-height:1.5">${msg}</div></div></div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  const waitEl=document.createElement('div');
+  waitEl.className='ai-box';
+  waitEl.innerHTML=`<div class="ai-hd"><div class="ai-av">🤖</div><span class="ai-nm">Case Study Analyst</span><div style="width:6px;height:6px;border-radius:50%;background:var(--blue);margin-left:4px;animation:pulse 1.6s infinite"></div></div><div class="ai-tx" style="color:var(--text3)">Analysing case data…</div>`;
+  msgs.appendChild(waitEl);
+  msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const sample=await window.claude?.use('sample');
+    if(!sample)throw new Error('AI not available');
+    await sample([{role:'user',content:UPI_CONTEXT+'\n\nQuestion: '+msg}],{
+      onText:({text})=>{const ta=waitEl.querySelector('.ai-tx');if(ta){ta.textContent=text;ta.style.color='var(--text2)';}msgs.scrollTop=msgs.scrollHeight;},
+      modelTier:'default'
+    });
+  }catch(e){
+    const ta=waitEl.querySelector('.ai-tx');
+    if(ta){ta.style.color='var(--text2)';ta.textContent='AI service not available. Key answer from case data: '+getStaticAnswer(msg);}
+  }
+  btn.disabled=false;btn.textContent='Ask';
+}
+
+function getStaticAnswer(q){
+  const lq=q.toLowerCase();
+  if(lq.includes('mdr')||lq.includes('bank'))return 'Banks lost ₹2,000Cr/year revenue from zero MDR (Jan 2020). They received ₹1,300Cr/year PLI compensation — a net loss of ₹700Cr/year. Banks argued this was cross-subsidisation of fintechs using their infrastructure.';
+  if(lq.includes('whatsapp'))return 'WhatsApp Pay was blocked for 18 months (2018-2020) because Meta refused to store Indian payment data in India — violating RBI\'s data localisation mandate. WhatsApp finally complied and launched, but NPCI capped it at 10M users (30% market share rule).';
+  if(lq.includes('pix')||lq.includes('brazil'))return 'PIX (Brazil) launched 2020, UPI 2016. Both are real-time, 24×7, zero-cost to users. Key difference: PIX is run directly by Brazil\'s Central Bank (BCB), UPI is run by NPCI (quasi-private). PIX reached 140M users in 2 years vs UPI\'s 3 years. Both are policy successes.';
+  if(lq.includes('cbs')||lq.includes('core banking'))return 'PSU (public sector) banks run Core Banking Systems that are 20-30 years old, often IBM mainframes. These systems have maintenance windows (downtime) which conflict with UPI\'s 24×7 requirement. 23% of all UPI transaction failures originate at the bank CBS layer — not at NPCI\'s switch. CBS modernisation is the #1 infrastructure risk.';
+  return 'Based on the UPI case data: UPI grew from 93,000 transactions in 2016 to 14 billion in January 2024 — a 10,000× increase. The key success factors were open API architecture, zero MDR policy, interoperability mandate, and a layered stakeholder model that gave each group sovereignty over their domain.';
+}
+
+// ══════ INIT ══════
+document.addEventListener('DOMContentLoaded',()=>{
+  buildGrowthChart();
+  buildArch();
+  buildTensionMatrix();
+  buildSHMap();
+  buildSHPositions();
+  buildTech();
+  buildRisk();
+  buildScale();
+  buildDecisions();
+  buildLessons();
+  buildAI();
+  simUpdate();
+});
+</script>
+</body>
+</html>
+HTMLEOF
